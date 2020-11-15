@@ -1,0 +1,35 @@
+# Microservice port
+server:
+  port: 8083
+
+# Register this microservice into Eureka
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka/
+    register-with-eureka: true
+
+# Spring configuration
+spring:
+  application:
+    name: authentication
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  jmx:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/bookstore?allowPublicKeyRetrieval=true&sslMode=DISABLED
+    username: root
+    password: root
+
+# Token inside Authentication service will be only signed
+jwt:
+  config:
+    type: signed

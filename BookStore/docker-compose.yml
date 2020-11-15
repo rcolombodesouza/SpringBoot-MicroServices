@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+
+  gateway-service:
+    image: gateway-image:latest
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway-container
+    environment:
+      eureka.client.service-url.defaultZone: http://discovery-service:8081/eureka/
+    ports:
+      - 8080:8080
+    working_dir: /opt/app
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+
+  discovery-service:
+    image: discovery-image:latest
+    build:
+      context: ./discovery
+      dockerfile: Dockerfile
+    container_name: discovery-container
+    ports:
+      - 8081:8081
+    working_dir: /opt/app
+
+  book-service:
+    image: book-image:latest
+    build:
+      context: ./book
+      dockerfile: Dockerfile
+    container_name: book-container
+    environment:
+      eureka.client.service-url.defaultZone: http://discovery-service:8081/eureka/
+      spring.datasource.url: jdbc:mysql://db-service:3306/bookstore?allowPublicKeyRetrieval=true&sslMode=DISABLED
+    ports:
+      - 8082:8082
+    working_dir: /opt/app
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - db-service
+
+  authentication-service:
+    image: authentication-image:latest
+    build:
+      context: ./authentication
+      dockerfile: Dockerfile
+    container_name: authentication-container
+    environment:
+      eureka.client.service-url.defaultZone: http://discovery-service:8081/eureka/
+      spring.datasource.url: jdbc:mysql://db-service:3306/bookstore?allowPublicKeyRetrieval=true&sslMode=DISABLED
+    ports:
+      - 8083:8083
+    working_dir: /opt/app
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - db-service
+
+  db-service:
+    image: mysql:latest
+    container_name: database-container
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: bookstore
+    volumes:
+      - microservices_store:/var/lib/mysql
+
+volumes:
+  microservices_store:
