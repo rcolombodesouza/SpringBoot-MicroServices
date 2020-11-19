@@ -10,7 +10,7 @@ Follow the steps to run this project:
 
 1) Download the project to your computer.
 2) Build the project using maven (mvn clean install).
-3) Docker must be running in this step. On the root directory, execute "docker-compose docker-compose.yml --build -d". This will build the project on docker in different              containers.
+3) Docker must be running in this step. On the root directory, execute "docker-compose up --build -d". This will build the project on docker in different              containers.
 4) Create two tables Book (Long id, String title, String author) and User (Long id, String username, String password, String role).
 5) Add a few books into Book table.
 6) To add an user, you will need to encrypt a password. To do that you can run the AuthenticationApplicationTests.java by changing the pre defined password which is there (in the    case it is root). This will give you an encrypted password. Add that to your database insertion.
